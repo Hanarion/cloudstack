@@ -561,8 +561,17 @@ export default {
       }).finally(() => {
         this.networkOfferingLoading = false
         if (this.arrayHasItems(this.networkOfferings)) {
-          this.form.networkofferingid = 0
-          this.handleNetworkOfferingChange(this.networkOfferings[0])
+          const requiredOfferingId = this.networkOfferings.findIndex(offering => offering.availability === 'Required')
+          const requiredOffering = this.networkOfferings[requiredOfferingId]
+
+          if (requiredOffering) {
+            this.form.networkofferingid = requiredOfferingId
+            this.handleNetworkOfferingChange(requiredOffering)
+          } else {
+            this.form.networkofferingid = 0
+            // Fallback to the first one if no 'Required' offering exists
+            this.handleNetworkOfferingChange(this.networkOfferings[0])
+          }
         }
       })
     },
